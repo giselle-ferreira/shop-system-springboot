@@ -34,8 +34,7 @@ public class User implements Serializable {
 	private String name;
 	private String email;
 	private String phone;
-	private String password;
-	
+	private String password;	
 	
 	@Setter(AccessLevel.NONE)
 	@OneToMany(mappedBy = "client")
