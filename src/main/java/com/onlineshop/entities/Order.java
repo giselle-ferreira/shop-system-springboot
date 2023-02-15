@@ -2,6 +2,8 @@ package com.onlineshop.entities;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.onlineshop.entities.enums.OrderStatus;
@@ -12,6 +14,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -42,6 +45,10 @@ public class Order implements Serializable {
 	@JoinColumn(name = "client_id")
 	private User client;
 	
+	//Collection
+	@OneToMany
+	private Set<Order> items = new HashSet<>();
+	
 	
 	public Order(Long id, Instant moment, OrderStatus orderStatus, User client) {
 		super();
@@ -49,8 +56,7 @@ public class Order implements Serializable {
 		this.moment = moment;
 		setOrderStatus(orderStatus);
 		this.client = client;
-	}	
-	
+	}		
 	
 	public OrderStatus getOrderStatus() {
 		return OrderStatus.valueOf(orderStatus);
