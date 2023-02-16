@@ -2,31 +2,32 @@ package com.onlineshop.entities;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.onlineshop.entities.pk.OrderItemPK;
 
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
-import lombok.AccessLevel;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
-@Data
-@EqualsAndHashCode(of = {"id"})
 @Entity
+@EqualsAndHashCode(of = { "id" })
 @Table(name = "tb_order_item")
 public class OrderItem implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
-	@Setter(AccessLevel.NONE) 
-	@Getter(AccessLevel.NONE)
 	@EmbeddedId
-	private OrderItemPK id;
+	private final OrderItemPK id = new OrderItemPK();
 	
+	@Getter
+	@Setter
 	private Integer quantity;
+	
+	@Getter
+	@Setter
 	private Double price;
 	
 	public OrderItem() {
@@ -40,6 +41,7 @@ public class OrderItem implements Serializable {
 		this.price = price;
 	}		
 	
+	@JsonIgnore	
 	public Order getOrder() {
 		return id.getOrder();
 	}
@@ -47,7 +49,7 @@ public class OrderItem implements Serializable {
 	public void setOrder(Order order) {
 		id.setOrder(order);
 	}
-	
+		
 	public Product getProduct() {
 		return id.getProduct();
 	}
@@ -55,4 +57,5 @@ public class OrderItem implements Serializable {
 	public void setOrder(Product product) {
 		id.setProduct(product);
 	}
+
 }

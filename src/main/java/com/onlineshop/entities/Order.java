@@ -8,6 +8,7 @@ import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.onlineshop.entities.enums.OrderStatus;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -15,7 +16,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,21 +37,25 @@ public class Order implements Serializable {
 	@Getter	@Setter
 	private Long id;
 
-	@Getter	@Setter
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "GMT")
+	@Getter	@Setter
 	private Instant moment;
 	
 	private Integer orderStatus;	
 	
-	@Getter	@Setter
 	@ManyToOne
 	@JoinColumn(name = "client_id")
+	@Getter	@Setter
 	private User client;
 	
-	//Collection
-	@OneToMany
-	private Set<Order> items = new HashSet<>();
+	@Getter
+	@Setter(AccessLevel.NONE) 
+	@OneToMany(mappedBy = "id.order") 	
+	private final Set<OrderItem> items = new HashSet<>();	
 	
+	@OneToOne(mappedBy = "order", cascade = CascadeType.ALL) //so they have the same id
+	@Getter	@Setter
+	private Payment payment;
 	
 	public Order(Long id, Instant moment, OrderStatus orderStatus, User client) {
 		super();
@@ -56,7 +63,7 @@ public class Order implements Serializable {
 		this.moment = moment;
 		setOrderStatus(orderStatus);
 		this.client = client;
-	}		
+	}				
 	
 	public OrderStatus getOrderStatus() {
 		return OrderStatus.valueOf(orderStatus);
@@ -67,5 +74,4 @@ public class Order implements Serializable {
 			this.orderStatus = orderStatus.getCode();
 		}			
 	}
-	
 }
