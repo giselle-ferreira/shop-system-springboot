@@ -17,15 +17,13 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Data
 @Entity
 @NoArgsConstructor
-@AllArgsConstructor
 @EqualsAndHashCode(of = {"id"})
 @Table(name = "tb_product")
 public class Product implements Serializable {
@@ -34,22 +32,31 @@ public class Product implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-	private String name;
-	private String descrition;
-	private Double price;
-	private String imgUrl;
+	@Getter @Setter private Long id;
+	
+	@Getter @Setter private String name;
+	@Getter @Setter private String descrition;
+	@Getter @Setter private Double price;
+	@Getter @Setter private String imgUrl;
 
 	// it's instantiated so the collection won't start as null
 	// Set is an interface, can't be instantiated. Hence the use of HashSet
 	@ManyToMany
-	@Setter(AccessLevel.NONE)
+	@Getter @Setter(AccessLevel.NONE)
 	@JoinTable(name = "tb_product_category", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
 	private final Set<Category> categories = new HashSet<>();
 	
 	@OneToMany(mappedBy = "id.product")
-	@Setter(AccessLevel.NONE)
-	private final Set<OrderItem> items = new HashSet<>();
+	private Set<OrderItem> items = new HashSet<>();
+	
+	public Product(Long id, String name, String descrition, Double price, String imgUrl) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.descrition = descrition;
+		this.price = price;
+		this.imgUrl = imgUrl;
+	}
 	
 	@JsonIgnore
 	public Set<Order> getOrders(){
@@ -60,5 +67,5 @@ public class Product implements Serializable {
 			set.add(x.getOrder());
 		}
 		return set;
-	}
+	}	
 }
